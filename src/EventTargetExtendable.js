@@ -108,6 +108,10 @@
         });
     }
 
+    if (window) {
+        window.EventTargetExtendable = EventTargetExtendable;
+    }
+
 }());
 
 
