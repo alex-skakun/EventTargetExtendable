@@ -41,8 +41,31 @@
         }
     }
 
-    function EventTargetExtendable () {
-
+    function EventTargetExtendable (eventsArray) {
+        if (Array.isArray(eventsArray)) {
+            var listeners = {};
+            eventsArray.forEach(function (eventName) {
+                var event = eventName.trim().toLowerCase(),
+                    property = 'on' + event;
+                Object.defineProperty(this, property, {
+                    enumerable: true,
+                    configurable: false,
+                    get: function () {
+                        return listeners[event] || null;
+                    },
+                    set: function (listener) {
+                        var oldListener = listeners[event];
+                        if (oldListener) {
+                            this.removeEventListener(event, oldListener);
+                        }
+                        if (typeof listener === 'function') {
+                            listeners[event] = listener;
+                            this.addEventListener(event, listener);
+                        }
+                    }
+                });
+            }, this);
+        }
     }
 
     EventTargetExtendable.prototype.addEventListener = function addEventListener (eventType, listener) {
@@ -110,6 +133,11 @@
 
     if (window) {
         window.EventTargetExtendable = EventTargetExtendable;
+    }
+    if (typeof define === 'function' && define.amd !== null) {
+        define('EventTargetExtendable', [], function () {
+            return EventTargetExtendable;
+        });
     }
 
 }());
