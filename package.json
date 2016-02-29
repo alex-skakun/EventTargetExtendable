@@ -2,7 +2,7 @@
   "name": "EventTargetExtendable",
   "description": "Base class, that can add functionality of events to your classes in code for browser.",
   "repository": "https://github.com/alex-skakun/EventTargetExtendable",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "license": "MIT",
   "scripts": {
     "build": "gulp build",
