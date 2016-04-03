@@ -47,7 +47,10 @@
     });
 
     gulp.task('release-tag', ['version'], function () {
-        gulp.src(['./package.json'])
+        gulp.src([
+            './package.json',
+            './bower.json'
+        ])
             .pipe(tagVersion());
     });
 

@@ -1,0 +1,27 @@
+{
+  "name": "EventTargetExtendable",
+  "version": "1.1.1",
+  "homepage": "https://github.com/alex-skakun/EventTargetExtendable",
+  "authors": [
+    "alex.skakun@me.com"
+  ],
+  "description": "Base class, that can add functionality of events to your classes in code for browser.",
+  "main": "./dist/ete.min.js",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "event",
+    "EventTarget",
+    "EventEmitter"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    ".idea",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
