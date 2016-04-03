@@ -7,8 +7,7 @@
         rename = require('gulp-rename'),
         uglify = require('gulp-uglify'),
         del = require('del'),
-        bump = require('gulp-bump'),
-        tagVersion = require('gulp-tag-version');
+        bump = require('gulp-bump');
 
     gulp.task('preprocess', function (done) {
         gulp.src(['./src/EventTargetExtendable.js'])
@@ -40,18 +39,13 @@
     });
 
     gulp.task('version', function (cb) {
-        gulp.src('./package.json')
+        gulp.src([
+                './package.json',
+                './bower.json'
+            ])
             .pipe(bump())
             .pipe(gulp.dest('./'))
             .on('end', cb);
-    });
-
-    gulp.task('release-tag', ['version'], function () {
-        gulp.src([
-            './package.json',
-            './bower.json'
-        ])
-            .pipe(tagVersion());
     });
 
     gulp.task('build', [
@@ -64,8 +58,7 @@
         'clean',
         'preprocess',
         'uglify',
-        'version',
-        'release-tag'
+        'version'
     ]);
 
 }());

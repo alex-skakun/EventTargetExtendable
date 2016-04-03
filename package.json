@@ -4,7 +4,7 @@
   "repository": {
     "git": "https://github.com/alex-skakun/EventTargetExtendable.git"
   },
-  "version": "1.1.1",
+  "version": "1.2.0",
   "license": "MIT",
   "scripts": {
     "build": "gulp build",
