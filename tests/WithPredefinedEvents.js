@@ -2,20 +2,18 @@ describe('With predefined events', function () {
 
     'use strict';
 
-    var test;
+    let test;
 
-    function Test () {
-        EventTargetExtendable.call(this, [
-            'test1',
-            'test2'
-        ]);
+    class Test extends EventTargetExtendable {
+        constructor () {
+            super([
+                'test1',
+                'test2'
+            ]);
+        }
     }
 
-    Test.prototype = Object.create(EventTargetExtendable.prototype, {
-        constructor: {
-            value: Test
-        }
-    });
+    
 
     beforeEach(function () {
         test = new Test();
@@ -30,7 +28,7 @@ describe('With predefined events', function () {
     });
 
     it('Should add event listener', function () {
-        var res = 0;
+        let res = 0;
         test.ontest1 = function () {
             res = 1;
         };
@@ -39,7 +37,7 @@ describe('With predefined events', function () {
     });
 
     it('Should remove event listener', function () {
-        var res = 0;
+        let res = 0;
         test.ontest1 = function () {
             res++;
         };
@@ -51,7 +49,7 @@ describe('With predefined events', function () {
     });
 
     it('Should work with both ways', function () {
-        var res = 0;
+        let res = 0;
         test.ontest1 = function () {
             res++;
         };
@@ -66,11 +64,11 @@ describe('With predefined events', function () {
     });
 
     it('Should not be able to add listener from predefined listener', function () {
-        var res = 0;
+        let res = 0;
         test.ontest1 = function () {
             res++;
         };
-        var added = test.addEventListener('test1', test.ontest1);
+        let added = test.addEventListener('test1', test.ontest1);
         expect(added).toBe(false);
         test.dispatchEvent('test1');
         expect(res).toBe(1);

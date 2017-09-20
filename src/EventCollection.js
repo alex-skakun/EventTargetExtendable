@@ -1,53 +1,31 @@
-(function () {
-
-    'use strict';
-
-    function EventCollection () {
-        var CollectionConstructor;
-        try {
-            CollectionConstructor = Map;
-        } catch (e) {
-            CollectionConstructor = Array;
-        }
-        this.collection = new CollectionConstructor();
+export class EventCollection {
+    constructor () {
+        this.collection = new Map();
     }
 
-    EventCollection.prototype.findForTarget = function findForTarget (target) {
-        if (Array.isArray(this.collection)) {
-            var collection = this.collection;
-            for (var i = 0, l = collection.length; i < l; i++) {
-                var item = collection[i];
-                if (item.target === target) {
-                    return item;
-                }
+    /**
+     * @param {object} target
+     * @returns {EventCollectionItem}
+     */
+    findForTarget (target) {
+        return this.collection.get(target) || null;
+    }
+
+    add (item) {
+        this.collection.set(item.target, item);
+    }
+
+    remove (item) {
+        return this.collection.delete(item.target);
+    }
+
+    checkEntries (target) {
+        let targetItem = this.findForTarget(target);
+        if (targetItem) {
+            let eventCount = Object.keys(targetItem.listeners).length;
+            if (eventCount === 0) {
+                this.remove(targetItem);
             }
-        } else {
-            return this.collection.get(target);
         }
-        return null;
-    };
-
-    EventCollection.prototype.add = function add (item) {
-        if (Array.isArray(this.collection)) {
-            this.collection.push(item);
-        } else {
-            this.collection.set(item.target, item);
-        }
-    };
-
-    EventCollection.prototype.remove = function remove (item) {
-        if (Array.isArray(this.collection)) {
-            var index = this.collection.indexOf(item);
-            if (index > -1) {
-                var removed = this.collection.splice(index, 1);
-                return removed.length === 1;
-            }
-            return false;
-        } else {
-            return this.collection.delete(item.target);
-        }
-    };
-
-    return EventCollection;
-
-}())
+    }
+}

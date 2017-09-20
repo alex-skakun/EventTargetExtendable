@@ -1,28 +1,18 @@
-/**
- * @param {Object} global
- * @param {Function} EventCollection
- * @param {Function} EventCollectionItem
- */
-(function (global, EventCollection, EventCollectionItem) {
+import {EventCollection} from './EventCollection';
+import {EventCollectionItem} from './EventCollectionItem';
 
-    'use strict';
 
-    var EVENT_LISTENERS = new EventCollection();
+const EVENT_LISTENERS = new EventCollection();
 
-    function findTargetItem (target) {
-        var allForThisTarget = EVENT_LISTENERS.findForTarget(target);
-        if (!allForThisTarget) {
-            allForThisTarget = new EventCollectionItem(target);
-            EVENT_LISTENERS.add(allForThisTarget);
-        }
-        return allForThisTarget;
-    }
-
-    function EventTargetExtendable (eventsArray) {
+export class EventTargetExtendable {
+    /**
+     * @param {Array<string>} eventsArray
+     */
+    constructor (eventsArray) {
         if (Array.isArray(eventsArray)) {
-            var listeners = {};
+            let listeners = {};
             eventsArray.forEach(function (eventName) {
-                var event = eventName.trim().toLowerCase(),
+                let event = eventName.trim().toLowerCase(),
                     property = 'on' + event;
                 Object.defineProperty(this, property, {
                     enumerable: true,
@@ -31,7 +21,7 @@
                         return listeners[event] || null;
                     },
                     set: function (listener) {
-                        var oldListener = listeners[event];
+                        let oldListener = listeners[event];
                         if (oldListener) {
                             this.removeEventListener(event, oldListener);
                         }
@@ -45,26 +35,28 @@
         }
     }
 
-    EventTargetExtendable.prototype.addEventListener = function addEventListener (eventType, listener) {
+    addEventListener (eventType, listener) {
         if (typeof listener === 'function') {
-            var targetItem = findTargetItem(this);
+            let targetItem = findTargetItem(this);
             return targetItem.addListener(eventType, listener);
         }
         return false;
-    };
+    }
 
-    EventTargetExtendable.prototype.removeEventListener = function removeEventListener (eventType, listener) {
-        var targetItem = findTargetItem(this);
-        return targetItem.removeListener(eventType, listener);
-    };
+    removeEventListener (eventType, listener) {
+        let targetItem = findTargetItem(this);
+        let result = targetItem.removeListener(eventType, listener);
+        EVENT_LISTENERS.checkEntries(this);
+        return result;
+    }
 
-    EventTargetExtendable.prototype.dispatchEvent = function dispatchEvent (eventType) {
-        var targetItem = findTargetItem(this),
+    dispatchEvent (eventType) {
+        let targetItem = findTargetItem(this),
             listeners = targetItem.getListenersByType(eventType),
             args = Array.prototype.slice.call(arguments, 1),
             _this = this;
         if (listeners) {
-            var forExecution = [];
+            let forExecution = [];
             listeners.forEach(function (listener) {
                 if (typeof listener === 'function') {
                     forExecution.push(listener);
@@ -72,32 +64,34 @@
             });
             forExecution.forEach(function (listener) {
                 listener.apply(_this, args);
-            })
+            });
         }
-    };
+    }
 
-    EventTargetExtendable.prototype.removeAllListeners = function removeAllListeners (type) {
-        var targetItem = findTargetItem(this);
+    removeAllListeners (type) {
+        let targetItem = findTargetItem(this);
         if (type) {
-            return targetItem.removeListeners(type);
+            let result =  targetItem.removeListeners(type);
+            EVENT_LISTENERS.checkEntries(this);
+            return result;
         } else {
             return EVENT_LISTENERS.remove(targetItem);
         }
-    };
-
-    var prototype = EventTargetExtendable.prototype,
-        methods = Object.keys(EventTargetExtendable.prototype);
-    for (var i = 0, l = methods.length; i < l; i++) {
-        Object.defineProperty(prototype, methods[i], {
-            enumerable: false,
-            configurable: false,
-            writable: false
-        });
     }
 
-    global.EventTargetExtendable = EventTargetExtendable;
+}
 
-}(this,
-    /* @include EventCollection.js */,
-    /* @include EventCollectionItem.js */
-));
+
+/**
+ * @param {object} target
+ * @returns {EventCollectionItem}
+ */
+function findTargetItem (target) {
+    let allForThisTarget = EVENT_LISTENERS.findForTarget(target);
+    if (!allForThisTarget) {
+        allForThisTarget = new EventCollectionItem(target);
+        EVENT_LISTENERS.add(allForThisTarget);
+    }
+    return allForThisTarget;
+}
+

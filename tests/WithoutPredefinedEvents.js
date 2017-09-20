@@ -1,14 +1,12 @@
 describe('Without predefined events', function () {
 
-    var test;
+    let test;
 
-    function Test () {}
+    class Test extends EventTargetExtendable {
+       
+    }
 
-    Test.prototype = Object.create(EventTargetExtendable.prototype, {
-        constructor: {
-            value: Test
-        }
-    });
+    
 
     beforeEach(function () {
         test = new Test();
@@ -23,12 +21,12 @@ describe('Without predefined events', function () {
     });
 
     it('Listener should be added', function () {
-        var added = test.addEventListener('test', function () {});
+        let added = test.addEventListener('test', function () {});
         expect(added).toBe(true);
     });
 
     it('Listener should be added and fired', function () {
-        var fired = false,
+        let fired = false,
             added = test.addEventListener('test', function () {
                 fired = true;
             });
@@ -38,7 +36,7 @@ describe('Without predefined events', function () {
     });
 
     it('Event argument should be passed', function () {
-        var arg = null,
+        let arg = null,
             data = 'test String';
         test.addEventListener('test', function (data) {
             arg = data;
@@ -48,7 +46,7 @@ describe('Without predefined events', function () {
     });
 
     it('Few arguments should be passed', function () {
-        var argsCount = 0;
+        let argsCount = 0;
         test.addEventListener('test', function (data) {
             argsCount = arguments.length;
         });
@@ -57,7 +55,7 @@ describe('Without predefined events', function () {
     });
 
     it('Should not be able to add the same listener twice', function () {
-        var listener = function () {},
+        let listener = function () {},
             added1 = test.addEventListener('test', listener),
             added2 = test.addEventListener('test', listener);
         expect(added1).toBe(true);
@@ -65,7 +63,7 @@ describe('Without predefined events', function () {
     });
 
     it('Should execute more than 1 listener', function () {
-        var res1, res2,
+        let res1, res2,
             listener1 = function () {res1 = true},
             listener2 = function () {res2 = true},
             added1 = test.addEventListener('test', listener1),
@@ -78,7 +76,7 @@ describe('Without predefined events', function () {
     });
 
     it('Should remove listener', function () {
-        var res1 = 0,
+        let res1 = 0,
             listener1 = function () {res1++};
         test.addEventListener('test', listener1);
         test.dispatchEvent('test');
@@ -89,7 +87,7 @@ describe('Without predefined events', function () {
     });
 
     it('Should remove all listeners for specified type', function () {
-        var results = [];
+        let results = [];
         test.addEventListener('test1', function () {
             results.push(1);
         });
@@ -114,7 +112,7 @@ describe('Without predefined events', function () {
     });
 
     it('Should remove all listeners', function () {
-        var results = [];
+        let results = [];
         test.addEventListener('test1', function () {
             results.push(1);
         });
